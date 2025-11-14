@@ -382,13 +382,17 @@ function loop() {
       // Save canvas state before transformations
       canvas.save();
 
-      // Flip character horizontally if facing left
-      if (player.direction === "left") {
+      // Flip character horizontally based on direction
+      // For target characters, flip the sprite direction (opposite of other characters)
+      const isTarget = player.character === "target";
+      const shouldFlip = isTarget ? (player.direction === "right") : (player.direction === "left");
+
+      if (shouldFlip) {
         canvas.translate(playerScreenX + 40, playerScreenY); // Translate to player center
         canvas.scale(-1, 1); // Flip horizontally
         canvas.drawImage(playerImage, -25, 0, 65, 65);
       } else {
-        // Facing right (default)
+        // Normal orientation
         canvas.drawImage(playerImage, playerScreenX - 25, playerScreenY, 65, 65);
       }
 
