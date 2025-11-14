@@ -159,12 +159,18 @@ async function main() {
       socket.nickname = nickname;
       // users.push(socket.nickname);
       // console.log(nickname);
+
+      // Randomly choose between two character types
+      const characterTypes = ["character", "nutshot_alien"];
+      const randomCharacter = characterTypes[Math.floor(Math.random() * characterTypes.length)];
+
       players.push({
         id: socket.id,
         x: 1000,
         y: 1000,
         username: "❄️" + nickname,
-        direction: "right" // Default facing direction
+        direction: "right", // Default facing direction
+        character: randomCharacter // Randomly assigned character type
       });
     });
 

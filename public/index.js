@@ -5,6 +5,9 @@ mapImage.src = '/snow.png';
 const characterImage = new Image();
 characterImage.src = '/character.png';
 
+const nutshotAlienImage = new Image();
+nutshotAlienImage.src = '/nutshot_alien.png';
+
 // Canvas setup with proper DPI handling
 const canvasElement = document.getElementById('canvas');
 const dpr = window.devicePixelRatio || 1;
@@ -41,7 +44,7 @@ let mapsPreRendered = false;
 
 // Image loading state
 let imagesLoaded = 0;
-const totalImages = 2;
+const totalImages = 3;
 
 // Cached myPlayer
 let cachedMyPlayer = null;
@@ -78,6 +81,7 @@ function onImageLoad() {
 
 mapImage.onload = onImageLoad;
 characterImage.onload = onImageLoad;
+nutshotAlienImage.onload = onImageLoad;
 
 // Pre-render static map layers to offscreen canvases
 function preRenderMaps() {
@@ -363,6 +367,9 @@ function loop() {
       const playerScreenX = player.x - cameraX;
       const playerScreenY = player.y - cameraY;
 
+      // Select the correct character image based on player's character type
+      const playerImage = player.character === "nutshot_alien" ? nutshotAlienImage : characterImage;
+
       // Save canvas state before transformations
       canvas.save();
 
@@ -370,10 +377,10 @@ function loop() {
       if (player.direction === "left") {
         canvas.translate(playerScreenX + 40, playerScreenY); // Translate to player center
         canvas.scale(-1, 1); // Flip horizontally
-        canvas.drawImage(characterImage, -25, 0, 65, 65);
+        canvas.drawImage(playerImage, -25, 0, 65, 65);
       } else {
         // Facing right (default)
-        canvas.drawImage(characterImage, playerScreenX - 25, playerScreenY, 65, 65);
+        canvas.drawImage(playerImage, playerScreenX - 25, playerScreenY, 65, 65);
       }
 
       // Restore canvas state
