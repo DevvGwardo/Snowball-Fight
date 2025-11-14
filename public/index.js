@@ -364,12 +364,32 @@ function loop() {
 
     // Render players
     for (const player of players) {
-      canvas.drawImage(characterImage, player.x - cameraX - 25, player.y - cameraY, 65, 65);
-      canvas.drawImage(santaHat, player.x - cameraX + 1, player.y - cameraY, 18, 18);
-      if (player.username.toString() == "❄️null") {
-        canvas.fillText(player.id.slice(0, 10) + "...", player.x - cameraX - 25, player.y - cameraY - 10);
+      const playerScreenX = player.x - cameraX;
+      const playerScreenY = player.y - cameraY;
+
+      // Save canvas state before transformations
+      canvas.save();
+
+      // Flip character horizontally if facing left
+      if (player.direction === "left") {
+        canvas.translate(playerScreenX + 40, playerScreenY); // Translate to player center
+        canvas.scale(-1, 1); // Flip horizontally
+        canvas.drawImage(characterImage, -25, 0, 65, 65);
+        canvas.drawImage(santaHat, -24, 0, 18, 18);
       } else {
-        canvas.fillText(player.username.slice(0, 10) ? `${player.username}` : `${player.username.slice(0, 10)}...`, player.x - cameraX - 25, player.y - cameraY - 10);
+        // Facing right (default)
+        canvas.drawImage(characterImage, playerScreenX - 25, playerScreenY, 65, 65);
+        canvas.drawImage(santaHat, playerScreenX + 1, playerScreenY, 18, 18);
+      }
+
+      // Restore canvas state
+      canvas.restore();
+
+      // Draw username (always in normal orientation)
+      if (player.username.toString() == "❄️null") {
+        canvas.fillText(player.id.slice(0, 10) + "...", playerScreenX - 25, playerScreenY - 10);
+      } else {
+        canvas.fillText(player.username.slice(0, 10) ? `${player.username}` : `${player.username.slice(0, 10)}...`, playerScreenX - 25, playerScreenY - 10);
       }
     }
 

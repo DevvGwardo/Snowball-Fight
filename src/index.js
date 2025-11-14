@@ -89,8 +89,10 @@ function tick(delta) {
 
     if(inputs.left === true) {
       player.x -= SPEED;
+      player.direction = "left"; // Update facing direction
     } else if (inputs.right === true) {
       player.x += SPEED;
+      player.direction = "right"; // Update facing direction
     };
 
     if(isCollidingWithMap(player)) {
@@ -161,7 +163,8 @@ async function main() {
         id: socket.id,
         x: 1000,
         y: 1000,
-        username: "❄️" + nickname
+        username: "❄️" + nickname,
+        direction: "right" // Default facing direction
       });
     });
 
