@@ -92,10 +92,10 @@ function tick(delta) {
 
     if(inputs.left === true) {
       player.x += isTarget ? SPEED : -SPEED;
-      player.direction = "left"; // Update facing direction
+      player.direction = isTarget ? "right" : "left"; // Face the direction of actual movement
     } else if (inputs.right === true) {
       player.x += isTarget ? -SPEED : SPEED;
-      player.direction = "right"; // Update facing direction
+      player.direction = isTarget ? "left" : "right"; // Face the direction of actual movement
     };
 
     if(isCollidingWithMap(player)) {
