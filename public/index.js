@@ -5,9 +5,6 @@ mapImage.src = '/snow.png';
 const characterImage = new Image();
 characterImage.src = '/character.png';
 
-const santaHat = new Image();
-santaHat.src = '/santa-hat.png';
-
 // Canvas setup with proper DPI handling
 const canvasElement = document.getElementById('canvas');
 const dpr = window.devicePixelRatio || 1;
@@ -44,7 +41,7 @@ let mapsPreRendered = false;
 
 // Image loading state
 let imagesLoaded = 0;
-const totalImages = 3;
+const totalImages = 2;
 
 // Cached myPlayer
 let cachedMyPlayer = null;
@@ -81,7 +78,6 @@ function onImageLoad() {
 
 mapImage.onload = onImageLoad;
 characterImage.onload = onImageLoad;
-santaHat.onload = onImageLoad;
 
 // Pre-render static map layers to offscreen canvases
 function preRenderMaps() {
@@ -375,11 +371,9 @@ function loop() {
         canvas.translate(playerScreenX + 40, playerScreenY); // Translate to player center
         canvas.scale(-1, 1); // Flip horizontally
         canvas.drawImage(characterImage, -25, 0, 65, 65);
-        canvas.drawImage(santaHat, -24, 0, 18, 18);
       } else {
         // Facing right (default)
         canvas.drawImage(characterImage, playerScreenX - 25, playerScreenY, 65, 65);
-        canvas.drawImage(santaHat, playerScreenX + 1, playerScreenY, 18, 18);
       }
 
       // Restore canvas state
