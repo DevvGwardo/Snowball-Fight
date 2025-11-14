@@ -77,10 +77,13 @@ function tick(delta) {
     const previousY = player.y;
     const previousX = player.x;
 
+    // Invert controls for "target" character
+    const isTarget = player.character === "target";
+
     if(inputs.up === true) {
-      player.y -= SPEED;
+      player.y += isTarget ? SPEED : -SPEED;
     } else if (inputs.down === true) {
-      player.y += SPEED;
+      player.y += isTarget ? -SPEED : SPEED;
     };
 
     if(isCollidingWithMap(player)) {
@@ -88,10 +91,10 @@ function tick(delta) {
     }
 
     if(inputs.left === true) {
-      player.x -= SPEED;
+      player.x += isTarget ? SPEED : -SPEED;
       player.direction = "left"; // Update facing direction
     } else if (inputs.right === true) {
-      player.x += SPEED;
+      player.x += isTarget ? -SPEED : SPEED;
       player.direction = "right"; // Update facing direction
     };
 
