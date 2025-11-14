@@ -310,9 +310,14 @@ const handleKeyUp = (e) => {
 };
 
 const handleCanvasClick = (e) => {
+  // Calculate angle from snowball spawn position (character center-bottom) to mouse cursor
+  // Character is always centered on screen, snowball spawns at character center-bottom
+  const snowballSpawnX = canvasHalfWidth + 7.5;  // Center of character
+  const snowballSpawnY = canvasHalfHeight + 58.5; // Near bottom of character
+
   const angle = Math.atan2(
-    e.clientY - canvasHalfHeight,
-    e.clientX - canvasHalfWidth,
+    e.clientY - snowballSpawnY,
+    e.clientX - snowballSpawnX,
   );
   socket.emit('snowballs', angle);
 };
