@@ -397,7 +397,7 @@ function loop() {
     canvas.fillStyle = "#FFFFFF";
     for (const snowball of snowballs) {
       canvas.beginPath();
-      canvas.arc(snowball.x - cameraX - 15, snowball.y - cameraY + 25, SNOWBALL_RADIUS, 0, 2 * Math.PI);
+      canvas.arc(snowball.x - cameraX, snowball.y - cameraY, SNOWBALL_RADIUS, 0, 2 * Math.PI);
       canvas.fill();
     }
   } catch (error) {

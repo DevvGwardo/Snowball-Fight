@@ -188,8 +188,8 @@ async function main() {
 
       snowballs.push({
         angle,
-        x: player.x,
-        y: player.y,
+        x: player.x + 7.5,  // Center of character (player.x - 25 + 32.5)
+        y: player.y + 58.5, // 10% from bottom of character (65px height - 6.5px)
         timeLeft: 1000,
         playerId: socket.id,
       });
