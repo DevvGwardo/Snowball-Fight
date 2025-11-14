@@ -395,12 +395,20 @@ function loop() {
       // Restore canvas state
       canvas.restore();
 
-      // Draw username (always in normal orientation)
+      // Draw username centered above character
+      let displayName;
       if (player.username.toString() == "❄️null") {
-        canvas.fillText(player.id.slice(0, 10) + "...", playerScreenX - 25, playerScreenY - 10);
+        displayName = player.id.slice(0, 10) + "...";
       } else {
-        canvas.fillText(player.username.slice(0, 10) ? `${player.username}` : `${player.username.slice(0, 10)}...`, playerScreenX - 25, playerScreenY - 10);
+        displayName = player.username.length > 10 ? `${player.username.slice(0, 10)}...` : player.username;
       }
+
+      // Measure text width to center it
+      const textWidth = canvas.measureText(displayName).width;
+      const characterCenterX = playerScreenX + 7.5; // Center of 65px character at playerScreenX - 25
+      const textX = characterCenterX - (textWidth / 2);
+
+      canvas.fillText(displayName, textX, playerScreenY - 10);
     }
 
     // Render snowballs (optimized)
