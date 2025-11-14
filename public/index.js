@@ -85,10 +85,14 @@ santaHat.onload = onImageLoad;
 
 // Pre-render static map layers to offscreen canvases
 function preRenderMaps() {
-  if (!groundMap[0] || groundMap[0].length === 0) return;
+  // Safety checks: Ensure all map arrays are valid
+  if (!groundMap || !groundMap[0] || groundMap[0].length === 0) return;
+  if (!treeMap || !treeMap[0] || treeMap[0].length === 0) return;
+  if (!otherTreeMap || !otherTreeMap[0] || otherTreeMap[0].length === 0) return;
 
-  const mapWidth = groundMap[0].length * TILE_SIZE;
-  const mapHeight = groundMap.length * TILE_SIZE;
+  try {
+    const mapWidth = groundMap[0].length * TILE_SIZE;
+    const mapHeight = groundMap.length * TILE_SIZE;
 
   // Ground layer
   groundCanvas = document.createElement('canvas');
@@ -171,7 +175,15 @@ function preRenderMaps() {
     }
   }
 
-  mapsPreRendered = true;
+    mapsPreRendered = true;
+  } catch (error) {
+    console.error('Error pre-rendering maps:', error);
+    // Reset flag to prevent trying to draw invalid canvases
+    mapsPreRendered = false;
+    groundCanvas = null;
+    treeCanvas = null;
+    otherTreeCanvas = null;
+  }
 }
 
 socket.on('connect', function(socket) {
@@ -327,45 +339,49 @@ window.addEventListener('resize', handleResize);
 window.addEventListener('beforeunload', handleBeforeUnload);
 
 function loop() {
-  // Only render if images are loaded
-  if (imagesLoaded < totalImages) {
-    animationFrameId = window.requestAnimationFrame(loop);
-    return;
-  }
-
-  canvas.clearRect(0, 0, displayWidth, displayHeight);
-
-  let cameraX = 0;
-  let cameraY = 0;
-  if (cachedMyPlayer) {
-    cameraX = (cachedMyPlayer.x - displayWidth / 2) | 0;
-    cameraY = (cachedMyPlayer.y - displayHeight / 2) | 0;
-  }
-
-  // Render pre-rendered map layers (3 draw calls instead of 120,000+)
-  if (mapsPreRendered) {
-    canvas.drawImage(groundCanvas, -cameraX, -cameraY);
-    canvas.drawImage(treeCanvas, -cameraX, -cameraY);
-    canvas.drawImage(otherTreeCanvas, -cameraX, -cameraY);
-  }
-
-  // Render players
-  for (const player of players) {
-    canvas.drawImage(snowmanImage, player.x - cameraX - 25, player.y - cameraY, 65, 65);
-    canvas.drawImage(santaHat, player.x - cameraX + 1, player.y - cameraY, 18, 18);
-    if (player.username.toString() == "❄️null") {
-      canvas.fillText(player.id.slice(0, 10) + "...", player.x - cameraX - 25, player.y - cameraY - 10);
-    } else {
-      canvas.fillText(player.username.slice(0, 10) ? `${player.username}` : `${player.username.slice(0, 10)}...`, player.x - cameraX - 25, player.y - cameraY - 10);
+  try {
+    // Only render if images are loaded
+    if (imagesLoaded < totalImages) {
+      animationFrameId = window.requestAnimationFrame(loop);
+      return;
     }
-  }
 
-  // Render snowballs (optimized)
-  canvas.fillStyle = "#FFFFFF";
-  for (const snowball of snowballs) {
-    canvas.beginPath();
-    canvas.arc(snowball.x - cameraX - 15, snowball.y - cameraY + 25, SNOWBALL_RADIUS, 0, 2 * Math.PI);
-    canvas.fill();
+    canvas.clearRect(0, 0, displayWidth, displayHeight);
+
+    let cameraX = 0;
+    let cameraY = 0;
+    if (cachedMyPlayer) {
+      cameraX = (cachedMyPlayer.x - displayWidth / 2) | 0;
+      cameraY = (cachedMyPlayer.y - displayHeight / 2) | 0;
+    }
+
+    // Render pre-rendered map layers (3 draw calls instead of 120,000+)
+    if (mapsPreRendered && groundCanvas && treeCanvas && otherTreeCanvas) {
+      canvas.drawImage(groundCanvas, -cameraX, -cameraY);
+      canvas.drawImage(treeCanvas, -cameraX, -cameraY);
+      canvas.drawImage(otherTreeCanvas, -cameraX, -cameraY);
+    }
+
+    // Render players
+    for (const player of players) {
+      canvas.drawImage(snowmanImage, player.x - cameraX - 25, player.y - cameraY, 65, 65);
+      canvas.drawImage(santaHat, player.x - cameraX + 1, player.y - cameraY, 18, 18);
+      if (player.username.toString() == "❄️null") {
+        canvas.fillText(player.id.slice(0, 10) + "...", player.x - cameraX - 25, player.y - cameraY - 10);
+      } else {
+        canvas.fillText(player.username.slice(0, 10) ? `${player.username}` : `${player.username.slice(0, 10)}...`, player.x - cameraX - 25, player.y - cameraY - 10);
+      }
+    }
+
+    // Render snowballs (optimized)
+    canvas.fillStyle = "#FFFFFF";
+    for (const snowball of snowballs) {
+      canvas.beginPath();
+      canvas.arc(snowball.x - cameraX - 15, snowball.y - cameraY + 25, SNOWBALL_RADIUS, 0, 2 * Math.PI);
+      canvas.fill();
+    }
+  } catch (error) {
+    console.error('Error in render loop:', error);
   }
 
   animationFrameId = window.requestAnimationFrame(loop);
