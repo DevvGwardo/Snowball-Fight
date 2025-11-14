@@ -6,8 +6,6 @@
   <title>My Cozy Snowball Fight</title>
   <link rel = "icon" href = "./snowman.png" type = "image/x-icon">
   <meta name='viewport' content='width=device-width, initial-scale=1'>
-  <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
-  <script src='index.js'></script>
 
   <script>
     function openSite() {
@@ -84,11 +82,10 @@
       justify-content: space-between;
       content: "";
       z-index: 14;
-      background: #9797976e;
+      background: rgba(151, 151, 151, 0.85);
       background-image: url("./snow_background.svg");
       background-size: cover;
       background-position: center;
-      backdrop-filter: blur(10px);
       width: 90%;
       min-width: 90%;
       height: 30px;
@@ -101,7 +98,6 @@
     }
 
     #canvas {
-      transform: scale(2);
       min-width: 100%;
       min-height: 100%;
       max-width: 100%;
@@ -161,11 +157,10 @@
       font-family: monospace;
       font-weight: bolder;
       user-select: none;
-      background: #9797976e;
+      background: rgba(151, 151, 151, 0.85);
       background-image: url("./snow_background.svg");
       background-size: cover;
       background-position: center;
-      backdrop-filter: blur(10px);
       width: 300px;
       margin-right: auto;
       margin-left: 5%;
@@ -180,25 +175,6 @@
       left: 0;
       z-index: 29;
       bottom: 20;
-      /* justify-content: center;
-      left: 0;
-      right: 0;
-      z-index: 20;
-      bottom: 20px;
-      font-size: 1.3rem;
-      font-family: monospace;
-      font-weight: bolder;
-      user-select: none;
-      background: #9797976e;
-      background-image: url("./snow_background.svg");
-      background-size: cover;
-      background-position: center;
-      backdrop-filter: blur(10px);
-      width: 300px;
-      margin-right: 5%;
-      margin-left: auto;
-      border-radius: 15px;
-      box-shadow: 0px 0px 0.2rem black; */
     }
 
     .snowsicle1 {

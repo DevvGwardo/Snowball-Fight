@@ -23,25 +23,25 @@ async function loadMap() {
     const otherTreeRow = [];
 
     for(let col = 0; col < map.width; col++) {
-      const ground = groundTiles[row * map.height + col];
+      const ground = groundTiles[row * map.width + col];
       if(ground) {
-        groundRow.push({ id: ground.id, gid: ground.gid });
+        groundRow.push({ id: ground.id });
       } else {
-        groundRow.push(undefined)
+        groundRow.push(null)
       }
 
-      const treeTile = treeTiles[row * map.height + col];
+      const treeTile = treeTiles[row * map.width + col];
       if(treeTile) {
-        treeRow.push({ id: treeTile.id, gid: treeTile.gid });
+        treeRow.push({ id: treeTile.id });
       } else {
-        treeRow.push(undefined);
+        treeRow.push(null);
       }
 
-      const otherTreeTiles = otherTrees[row * map.height + col];
+      const otherTreeTiles = otherTrees[row * map.width + col];
       if(otherTreeTiles) {
-        otherTreeRow.push({ id: otherTreeTiles.id, gid: otherTreeTiles.gid });
+        otherTreeRow.push({ id: otherTreeTiles.id });
       } else {
-        otherTreeRow.push(undefined);
+        otherTreeRow.push(null);
       }
     }
     trees2D.push(treeRow);

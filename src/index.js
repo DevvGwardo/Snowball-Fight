@@ -16,7 +16,6 @@ const SNOWBALL_SPEED = 3;
 const PLAYER_SIZE = 65;
 const TILE_SIZE = 16;
 
-let usersJoined = [];
 let players = [];
 let snowballs = [];
 
@@ -35,8 +34,14 @@ function isColliding(rect1, rect2) {
 }
 
 function isCollidingWithMap(player) {
-  for (let row = 0; row < logos2D.length; row++) {
-    for (let col = 0; col < logos2D[0].length; col++) {
+  // Optimized: Only check tiles near the player instead of entire map
+  const minCol = Math.max(0, Math.floor(player.x / TILE_SIZE));
+  const maxCol = Math.min(logos2D[0].length - 1, Math.ceil((player.x + 16) / TILE_SIZE));
+  const minRow = Math.max(0, Math.floor(player.y / TILE_SIZE));
+  const maxRow = Math.min(logos2D.length - 1, Math.ceil((player.y + 16) / TILE_SIZE));
+
+  for (let row = minRow; row <= maxRow; row++) {
+    for (let col = minCol; col <= maxCol; col++) {
       const tile = logos2D[row][col];
       if(tile && isColliding(
         {
@@ -60,6 +65,7 @@ function isCollidingWithMap(player) {
 }
 
 function tick(delta) {
+  // Process player movement first
   for (const player of players) {
     const inputs = inputsMap[player.id];
     const previousY = player.y;
@@ -84,38 +90,48 @@ function tick(delta) {
     if(isCollidingWithMap(player)) {
       player.x = previousX;
     }
+  }
 
-    for(const snowball of snowballs) {
-      snowball.x += Math.cos(snowball.angle) * SNOWBALL_SPEED;
-      snowball.y += Math.sin(snowball.angle) * SNOWBALL_SPEED;
-      snowball.timeLeft -= delta;
-      
-      for(const player of players) {
-        if(player.id === snowball.playerId) continue;
-        const distance = Math.sqrt((player.x) + PLAYER_SIZE - snowball.x) ** 2 + ((player.y - 65) + PLAYER_SIZE - snowball.y) ** 2;
-        if(distance <= PLAYER_SIZE) {
-          if(snowball.x < 300) {
-            break;
-          } else if(snowball.y < 300) {
-            break;
-          } else {
-            player.x = 250;
-            player.y = 250;
-            snowball.timeLeft = 0;
-            playersMelted.push(player.id)
-            break;
-          }
+  // Process snowball movement and collisions separately (outside player loop)
+  for(const snowball of snowballs) {
+    snowball.x += Math.cos(snowball.angle) * SNOWBALL_SPEED;
+    snowball.y += Math.sin(snowball.angle) * SNOWBALL_SPEED;
+    snowball.timeLeft -= delta;
+
+    for(const player of players) {
+      if(player.id === snowball.playerId) continue;
+
+      // Fixed distance calculation with squared distance optimization
+      const dx = (player.x + PLAYER_SIZE) - snowball.x;
+      const dy = (player.y - 65 + PLAYER_SIZE) - snowball.y;
+      const distanceSquared = dx * dx + dy * dy;
+
+      if(distanceSquared <= PLAYER_SIZE * PLAYER_SIZE) {
+        if(snowball.x < 300) {
+          break;
+        } else if(snowball.y < 300) {
+          break;
+        } else {
+          player.x = 250;
+          player.y = 250;
+          snowball.timeLeft = 0;
+          playersMelted.push(player.id)
+          break;
         }
       }
     }
-
-    snowballs = snowballs.filter((snowball) => snowball.timeLeft > 0);
-
-    io.emit("players", players);
-    io.emit("snowballs", snowballs);
-    io.emit("user-joined", players.length);
-    io.emit("players-melted", playersMelted);
   }
+
+  snowballs = snowballs.filter((snowball) => snowball.timeLeft > 0);
+
+  // Move io.emit calls outside player loop - emit once per tick instead of once per player
+  io.emit("players", players);
+  io.emit("snowballs", snowballs);
+  io.emit("user-joined", players.length);
+  io.emit("players-melted", playersMelted);
+
+  // Clear playersMelted after emitting
+  playersMelted = [];
 }
 
 async function main() {
@@ -136,15 +152,13 @@ async function main() {
       // users.push(socket.nickname);
       // console.log(nickname);
       players.push({
-        id: socket.id, 
-        x: 1000, 
+        id: socket.id,
+        x: 1000,
         y: 1000,
         username: "❄️" + nickname
       });
     });
 
-    usersJoined.push(socket.id)
-    
     socket.emit("map", {
       ground: ground2D,
       trees: trees2D,
@@ -168,7 +182,8 @@ async function main() {
 
     socket.on('disconnect', () => {
       players = players.filter((player) => player.id !== socket.id);
-      usersJoined = usersJoined.filter((player) => player !== socket.id);
+      // Fix memory leak: delete inputsMap entry on disconnect
+      delete inputsMap[socket.id];
     });
     
   });
