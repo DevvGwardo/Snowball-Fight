@@ -8,6 +8,9 @@ characterImage.src = '/character.png';
 const nutshotAlienImage = new Image();
 nutshotAlienImage.src = '/nutshot_alien.png';
 
+const targetImage = new Image();
+targetImage.src = '/target.png';
+
 // Canvas setup with proper DPI handling
 const canvasElement = document.getElementById('canvas');
 const dpr = window.devicePixelRatio || 1;
@@ -44,7 +47,7 @@ let mapsPreRendered = false;
 
 // Image loading state
 let imagesLoaded = 0;
-const totalImages = 3;
+const totalImages = 4;
 
 // Cached myPlayer
 let cachedMyPlayer = null;
@@ -82,6 +85,7 @@ function onImageLoad() {
 mapImage.onload = onImageLoad;
 characterImage.onload = onImageLoad;
 nutshotAlienImage.onload = onImageLoad;
+targetImage.onload = onImageLoad;
 
 // Pre-render static map layers to offscreen canvases
 function preRenderMaps() {
@@ -368,7 +372,12 @@ function loop() {
       const playerScreenY = player.y - cameraY;
 
       // Select the correct character image based on player's character type
-      const playerImage = player.character === "nutshot_alien" ? nutshotAlienImage : characterImage;
+      let playerImage = characterImage; // default
+      if (player.character === "nutshot_alien") {
+        playerImage = nutshotAlienImage;
+      } else if (player.character === "target") {
+        playerImage = targetImage;
+      }
 
       // Save canvas state before transformations
       canvas.save();
