@@ -2,8 +2,8 @@
 const mapImage = new Image();
 mapImage.src = '/snow.png';
 
-const snowmanImage = new Image();
-snowmanImage.src = '/snowman.png';
+const characterImage = new Image();
+characterImage.src = '/character.png';
 
 const santaHat = new Image();
 santaHat.src = '/santa-hat.png';
@@ -80,7 +80,7 @@ function onImageLoad() {
 }
 
 mapImage.onload = onImageLoad;
-snowmanImage.onload = onImageLoad;
+characterImage.onload = onImageLoad;
 santaHat.onload = onImageLoad;
 
 // Pre-render static map layers to offscreen canvases
@@ -364,7 +364,7 @@ function loop() {
 
     // Render players
     for (const player of players) {
-      canvas.drawImage(snowmanImage, player.x - cameraX - 25, player.y - cameraY, 65, 65);
+      canvas.drawImage(characterImage, player.x - cameraX - 25, player.y - cameraY, 65, 65);
       canvas.drawImage(santaHat, player.x - cameraX + 1, player.y - cameraY, 18, 18);
       if (player.username.toString() == "❄️null") {
         canvas.fillText(player.id.slice(0, 10) + "...", player.x - cameraX - 25, player.y - cameraY - 10);
