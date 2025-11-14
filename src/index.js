@@ -160,8 +160,8 @@ async function main() {
       // users.push(socket.nickname);
       // console.log(nickname);
 
-      // Randomly choose between two character types
-      const characterTypes = ["character", "nutshot_alien"];
+      // Randomly choose between three character types
+      const characterTypes = ["character", "nutshot_alien", "target"];
       const randomCharacter = characterTypes[Math.floor(Math.random() * characterTypes.length)];
 
       players.push({
@@ -189,6 +189,11 @@ async function main() {
 
       // Safety check: Only create snowball if player exists
       if (!player) {
+        return;
+      }
+
+      // Prevent "target" characters from shooting snowballs
+      if (player.character === "target") {
         return;
       }
 
