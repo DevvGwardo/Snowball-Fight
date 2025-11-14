@@ -68,6 +68,12 @@ function tick(delta) {
   // Process player movement first
   for (const player of players) {
     const inputs = inputsMap[player.id];
+
+    // Safety check: Skip this player if inputs don't exist yet
+    if (!inputs) {
+      continue;
+    }
+
     const previousY = player.y;
     const previousX = player.x;
 
@@ -171,6 +177,12 @@ async function main() {
 
     socket.on('snowballs', (angle) => {
       const player = players.find((player) => player.id === socket.id);
+
+      // Safety check: Only create snowball if player exists
+      if (!player) {
+        return;
+      }
+
       snowballs.push({
         angle,
         x: player.x,
