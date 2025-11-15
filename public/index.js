@@ -195,9 +195,38 @@ socket.on('connect', function(socket) {
   check_username();
 });
 
-async function check_username() {
-  const nickname = await prompt('Enter a username!');
-  socket.emit('send-nickname', nickname);
+function check_username() {
+  const modal = document.getElementById('username-modal');
+  const input = document.getElementById('username-input');
+  const submitButton = document.getElementById('username-submit');
+
+  // Show the modal
+  modal.classList.remove('hidden');
+
+  // Focus on input after a short delay to ensure modal is visible
+  setTimeout(() => input.focus(), 100);
+
+  // Handle submit button click
+  const handleSubmit = () => {
+    const nickname = input.value.trim();
+    if (nickname) {
+      socket.emit('send-nickname', nickname);
+      modal.classList.add('hidden');
+      // Remove event listeners
+      submitButton.removeEventListener('click', handleSubmit);
+      input.removeEventListener('keypress', handleKeyPress);
+    }
+  };
+
+  // Handle Enter key press
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+
+  submitButton.addEventListener('click', handleSubmit);
+  input.addEventListener('keypress', handleKeyPress);
 }
 
 socket.on('map', (loadedMap) => {
